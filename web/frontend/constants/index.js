@@ -1,0 +1,7 @@
+const SHOPIFY_PRODUCT_CATEGORY_ID = 4364
+const SHOPIFY_VENDOR = 'iSimplexity Pvt. Ltd'
+
+export {
+    SHOPIFY_PRODUCT_CATEGORY_ID,
+    SHOPIFY_VENDOR
+}

@@ -1,75 +1,6 @@
 import { GraphqlQueryError } from "@shopify/shopify-api";
 import shopify from "./shopify.js";
 
-const ADJECTIVES = [
-  "autumn",
-  "hidden",
-  "bitter",
-  "misty",
-  "silent",
-  "empty",
-  "dry",
-  "dark",
-  "summer",
-  "icy",
-  "delicate",
-  "quiet",
-  "white",
-  "cool",
-  "spring",
-  "winter",
-  "patient",
-  "twilight",
-  "dawn",
-  "crimson",
-  "wispy",
-  "weathered",
-  "blue",
-  "billowing",
-  "broken",
-  "cold",
-  "damp",
-  "falling",
-  "frosty",
-  "green",
-  "long",
-];
-
-const NOUNS = [
-  "waterfall",
-  "river",
-  "breeze",
-  "moon",
-  "rain",
-  "wind",
-  "sea",
-  "morning",
-  "snow",
-  "lake",
-  "sunset",
-  "pine",
-  "shadow",
-  "leaf",
-  "dawn",
-  "glitter",
-  "forest",
-  "hill",
-  "cloud",
-  "meadow",
-  "sun",
-  "glade",
-  "bird",
-  "brook",
-  "butterfly",
-  "bush",
-  "dew",
-  "dust",
-  "field",
-  "fire",
-  "flower",
-];
-
-export const DEFAULT_PRODUCTS_COUNT = 5;
 const CREATE_PRODUCTS_MUTATION = `
   mutation populateProduct($input: ProductInput!) {
     productCreate(input: $input) {
@@ -82,26 +13,21 @@ const CREATE_PRODUCTS_MUTATION = `
 
 export default async function productCreator(
   session,
-  count = DEFAULT_PRODUCTS_COUNT,
-  productTitle='Test Product By Gaurav'
+  payload
 ) {
   const client = new shopify.api.clients.Graphql({ session });
-  console.log(client)
+
   try {
-    for (let i = 0; i < count; i++) {
+    payload.map(async (val) => {
       await client.query({
         data: {
           query: CREATE_PRODUCTS_MUTATION,
-          variables: {
-            input: {
-              title: productTitle,
-              variants: [{ price: randomPrice() }],
-            },
-          },
+          variables: val
         },
       });
-    }
-  } catch (error) {
+    })
+  }
+  catch (error) {
     if (error instanceof GraphqlQueryError) {
       throw new Error(
         `${error.message}\n${JSON.stringify(error.response, null, 2)}`
@@ -110,8 +36,4 @@ export default async function productCreator(
       throw error;
     }
   }
-}
-
-function randomPrice() {
-  return Math.round((Math.random() * 10 + Number.EPSILON) * 100) / 100;
 }

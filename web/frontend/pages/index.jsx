@@ -1,19 +1,21 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ProductsCard from '../components/ProductsCard'
-import { ActionList, Frame, Loading, Page, Pagination, TopBar, Icon, Text, Tooltip, Button, Modal, Layout, VerticalStack } from '@shopify/polaris'
-import { CartMajor, ArrowRightMinor } from '@shopify/polaris-icons'
+import { Frame, Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack, Toast } from '@shopify/polaris'
+import { ArrowRightMinor } from '@shopify/polaris-icons'
 import { getProducts } from '../apis/product.api'
-import { Logo } from '../assets'
-import axios from 'axios'
+import { useAuthenticatedFetch } from '../hooks'
+import { SHOPIFY_VENDOR } from '../constants'
 
 const index = () => {
-  const [isLoading, setIsLoading] = useState(true)
+  const [loading, setLoading] = useState({
+    page: true,
+    confirmBtn: false
+  })
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0)
   const [cartProducts, setCartProducts] = useState([])
   const [products, setProducts] = useState([])
-  const [currentPage, setCurrentPage] = useState(0)
-  const [isSearchActive, setIsSearchActive] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const fetch = useAuthenticatedFetch()
 
   const handleAddProducts = (product) => {
     setCartProducts([...cartProducts, product])
@@ -24,67 +26,8 @@ const index = () => {
     setCartProducts(updatedItems)
   }
 
-  const handleSearchResultsDismiss = useCallback(() => {
-    setIsSearchActive(false);
-    setSearchValue('');
-  }, []);
-
-  const handleSearchChange = useCallback((value) => {
-    setSearchValue(value);
-    setIsSearchActive(value.length > 0);
-  }, []);
-
-  const logo = {
-    topBarSource: Logo,
-    width: 40,
-    url: '/',
-    accessibilityLabel: 'Spenza',
-  };
-
-  const searchResultsMarkup = (
-    <ActionList
-      items={[{ content: 'Shopify help center' }, { content: 'Community forums' }]}
-    />
-  );
-
-  const searchFieldMarkup = (
-    <TopBar.SearchField
-      onChange={handleSearchChange}
-      value={searchValue}
-      placeholder="Search"
-      showFocusBorder
-    />
-  );
-
-  const secondaryMenuMarkup = (
-    <Tooltip dismissOnMouseOut content={`Total Products: ${cartProducts.length}`}>
-      <TopBar.Menu
-        activatorContent={
-          <span style={{ display: 'flex', gap: 10 }}>
-            <Icon
-              source={CartMajor}
-              color='primary'
-            />
-            <Text>{cartProducts.length}</Text>
-          </span>
-        }
-      />
-    </Tooltip>
-  );
-
-  const topBarMarkup = (
-    <TopBar
-      searchResultsVisible={isSearchActive}
-      searchField={searchFieldMarkup}
-      searchResults={searchResultsMarkup}
-      onSearchResultsDismiss={handleSearchResultsDismiss}
-      secondaryMenu={secondaryMenuMarkup}
-    />
-  );
-
   const handleCheckout = () => {
     setIsModalVisible(true)
-    console.log('Handle Add product called', cartProducts)
   }
 
   const calculateCartPrice = () => {
@@ -93,27 +36,50 @@ const index = () => {
   }
 
   const handleFinalizeCheckout = async () => {
-    const response = await fetch("/api/products/create");
-    console.log(response)
+    setLoading({ ...loading, confirmBtn: true })
+    const payload = cartProducts.map(val => {
+      const { _id, productName, price, productId } = val
+      return {
+        input: {
+          // id: _id,
+          title: productName,
+          variants: [
+            {
+              price
+              // productId
+            }
+          ],
+          vendor: SHOPIFY_VENDOR
+        }
+      }
+    })
+
+    const response = await fetch('/api/products/create', {
+      method: 'POST',
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload)
+    })
+
+    setLoading({ ...loading, confirmBtn: false })
+    setIsModalVisible(false)
   }
 
   useEffect(() => {
     const getProduct = async () => {
-      setIsLoading(true)
+      setLoading({ ...loading, page: true })
       const { result } = await getProducts(currentPage)
       setProducts(result)
-      setIsLoading(false)
+      setLoading({ ...loading, page: false })
     }
     getProduct()
   }, [currentPage])
 
   return (
     <>
-      <Frame
-      // logo={logo}
-      // topBar={topBarMarkup}
-      >
-        {isLoading && <Loading />}
+      <Frame>
+        {loading.page && <Loading />}
         <Page
           title='Products'
           primaryAction={
@@ -125,7 +91,7 @@ const index = () => {
           }>
           {
             products.map((val) => {
-              const { productName, speed, zone, Operator, usageDataConverted, validityDays, network, price, currency, _id } = val
+              const { productName, productId, speed, zone, Operator, usageDataConverted, validityDays, network, price, currency, _id } = val
               return (
                 <ProductsCard
                   cartProducts={cartProducts}
@@ -133,6 +99,7 @@ const index = () => {
                   props={{
                     _id,
                     productName,
+                    productId,
                     speed,
                     zone,
                     Operator,
@@ -167,6 +134,7 @@ const index = () => {
         onClose={() => setIsModalVisible(false)}
         primaryAction={{
           content: 'Confirm',
+          loading: loading.confirmBtn,
           onAction: handleFinalizeCheckout,
         }}
         secondaryActions={{
