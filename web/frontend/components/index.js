@@ -1,4 +1,5 @@
 import ProductsCard from "./ProductsCard";
 import Notification from "./Notification";
-export { ProductsCard, Notification }
+import { ProductsSkeleton } from './skeleton'
+export { ProductsCard, Notification, ProductsSkeleton }
 export * from "./providers";

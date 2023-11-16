@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import ProductsCard from '../components/ProductsCard'
-import { Frame, Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack, Toast } from '@shopify/polaris'
+import { Frame, Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack } from '@shopify/polaris'
 import { ArrowRightMinor } from '@shopify/polaris-icons'
 import { getProducts } from '../apis/product.api'
 import { useAuthenticatedFetch } from '../hooks'
-import { SHOPIFY_VENDOR } from '../constants'
 
 const index = () => {
   const [loading, setLoading] = useState({
@@ -26,10 +25,6 @@ const index = () => {
     setCartProducts(updatedItems)
   }
 
-  const handleCheckout = () => {
-    setIsModalVisible(true)
-  }
-
   const calculateCartPrice = () => {
     const price = cartProducts.reduce((accumulator, currentValue) => accumulator + currentValue.price, 0);
     return parseFloat(price).toFixed(2)
@@ -48,8 +43,7 @@ const index = () => {
               price
               // productId
             }
-          ],
-          vendor: SHOPIFY_VENDOR
+          ]
         }
       }
     })
@@ -64,6 +58,7 @@ const index = () => {
 
     setLoading({ ...loading, confirmBtn: false })
     setIsModalVisible(false)
+    setCurrentPage(0)
   }
 
   useEffect(() => {
@@ -86,7 +81,7 @@ const index = () => {
             cartProducts.length > 0 &&
             <Button
               primary
-              onClick={handleCheckout}
+              onClick={() => setIsModalVisible(true)}
               icon={ArrowRightMinor}>Proceed</Button>
           }>
           {

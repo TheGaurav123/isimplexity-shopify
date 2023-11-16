@@ -53,7 +53,7 @@ app.post("/api/products/create", async (_req, res) => {
 
   try {
     await productCreator(res.locals.shopify.session, payload);
-  } 
+  }
   catch (e) {
     console.log(`Failed to process products/create: ${e.message}`);
     status = 500;
