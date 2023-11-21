@@ -17,10 +17,12 @@ const billingConfig = {
 const shopify = shopifyApp({
   api: {
     apiVersion: LATEST_API_VERSION,
-    scopes: ['read_products', 'write_products'],
+    scopes: ['write_products', 'read_products', 'read_orders', 'read_product_listings', 'read_customers', 'read_fulfillments', 'read_marketplace_orders'],
     restResources,
-    billing: undefined
+    billing: undefined,
+    logger: true
   },
+  useOnlineTokens: true,
   auth: {
     path: "/api/auth",
     callbackPath: "/api/auth/callback",

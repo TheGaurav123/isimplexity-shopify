@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ProductsCard from '../components/ProductsCard'
 import { Frame, Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack } from '@shopify/polaris'
-import { ArrowRightMinor } from '@shopify/polaris-icons'
+import { ArrowRightMinor, ExitMajor } from '@shopify/polaris-icons'
 import { getProducts } from '../apis/product.api'
 import { useAuthenticatedFetch } from '../hooks'
 
@@ -72,57 +72,53 @@ const index = () => {
   }, [currentPage])
 
   return (
-    <>
-      <Frame>
-        {loading.page && <Loading />}
-        <Page
-          title='Products'
-          primaryAction={
-            cartProducts.length > 0 &&
-            <Button
-              primary
-              onClick={() => setIsModalVisible(true)}
-              icon={ArrowRightMinor}>Proceed</Button>
-          }>
-          {
-            products.map((val) => {
-              const { productName, productId, speed, zone, Operator, usageDataConverted, validityDays, network, price, currency, _id } = val
-              return (
-                <ProductsCard
-                  cartProducts={cartProducts}
-                  key={_id}
-                  props={{
-                    _id,
-                    productName,
-                    productId,
-                    speed,
-                    zone,
-                    Operator,
-                    usageDataConverted,
-                    network,
-                    validityDays,
-                    price,
-                    currency
-                  }}
-                  onClick={handleAddProducts}
-                  onRemove={handleRemoveProducts}
-                />
-              )
-            })
-          }
-          <Pagination
-            hasPrevious
-            onPrevious={() => {
-              setCurrentPage(currentPage === 0 ? 0 : currentPage - 1)
-            }}
-            hasNext
-            onNext={() => {
-              setCurrentPage(currentPage + 1)
-            }}
-            label={currentPage + 1}
-          />
-        </Page>
-      </Frame>
+    <Page
+      title='Products'
+      primaryAction={
+        cartProducts.length > 0 &&
+        <Button
+          primary
+          onClick={() => setIsModalVisible(true)}
+          icon={ArrowRightMinor}>Proceed</Button>
+      }>
+      {loading.page && <Loading />}
+      {
+        products.map((val) => {
+          const { productName, productId, speed, zone, Operator, usageDataConverted, validityDays, network, price, currency, _id } = val
+          return (
+            <ProductsCard
+              cartProducts={cartProducts}
+              key={_id}
+              props={{
+                _id,
+                productName,
+                productId,
+                speed,
+                zone,
+                Operator,
+                usageDataConverted,
+                network,
+                validityDays,
+                price,
+                currency
+              }}
+              onClick={handleAddProducts}
+              onRemove={handleRemoveProducts}
+            />
+          )
+        })
+      }
+      <Pagination
+        hasPrevious
+        onPrevious={() => {
+          setCurrentPage(currentPage === 0 ? 0 : currentPage - 1)
+        }}
+        hasNext
+        onNext={() => {
+          setCurrentPage(currentPage + 1)
+        }}
+        label={currentPage + 1}
+      />
       <Modal
         open={isModalVisible}
         title="Add To Products"
@@ -150,7 +146,7 @@ const index = () => {
           </Layout>
         </Modal.Section>
       </Modal>
-    </>
+    </Page>
   )
 }
 
