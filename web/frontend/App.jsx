@@ -14,7 +14,6 @@ export default function App() {
   const { isAuthenticated, loginWithRedirect } = useAuth0()
 
   return (
-    isAuthenticated ?
       <PolarisProvider>
         <BrowserRouter>
           <AppBridgeProvider>
@@ -40,7 +39,5 @@ export default function App() {
           </AppBridgeProvider>
         </BrowserRouter>
       </PolarisProvider>
-      :
-      loginWithRedirect()
   );
 }
