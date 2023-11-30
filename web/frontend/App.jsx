@@ -6,7 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useState } from "react";
 import { ExitMajor, CustomersMinor } from '@shopify/polaris-icons'
 import { Logo } from './assets'
-import { Frame, TopBar } from '@shopify/polaris'
+import { Avatar, Frame, TopBar } from '@shopify/polaris'
 import {
   AppBridgeProvider,
   QueryProvider,
@@ -34,7 +34,7 @@ export default function App() {
         },
       ]
       }
-      avatar={user?.picture}
+      avatar={<Avatar source={user?.picture} shape='round' />}
       open={userMenuActive}
       onToggle={() => setUserMenuActive(e => !e)}
     />
