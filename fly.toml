@@ -1,0 +1,28 @@
+# fly.toml app configuration file generated for spenza-app on 2023-12-05T15:17:46+05:30
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "spenza-app"
+primary_region = "atl"
+
+[build]
+
+[env]
+  PORT = "3000"
+  HOST = "https://spenza-app.fly.dev"
+  SHOPIFY_API_KEY = "e7ad83db6087a33e2ffdc9c96af0f854"
+  SCOPES = "write_products, read_products"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024

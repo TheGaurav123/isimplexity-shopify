@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ProductsCard from '../components/ProductsCard'
-import { Frame, Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack } from '@shopify/polaris'
-import { ArrowRightMinor, ExitMajor } from '@shopify/polaris-icons'
+import { Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack } from '@shopify/polaris'
+import { ArrowRightMinor } from '@shopify/polaris-icons'
 import { getProducts } from '../apis/product.api'
 import { useAuthenticatedFetch } from '../hooks'
 
@@ -64,7 +64,7 @@ const index = () => {
   useEffect(() => {
     const getProduct = async () => {
       setLoading({ ...loading, page: true })
-      const { result } = await getProducts(currentPage)
+      const { result } = await getProducts(currentPage, 10)
       setProducts(result)
       setLoading({ ...loading, page: false })
     }

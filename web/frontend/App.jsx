@@ -3,7 +3,7 @@ import Routes from "./Routes";
 import { BrowserRouter } from "react-router-dom";
 import { NavigationMenu } from "@shopify/app-bridge-react";
 import { useAuth0 } from '@auth0/auth0-react'
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ExitMajor, CustomersMinor } from '@shopify/polaris-icons'
 import { Logo } from './assets'
 import { Avatar, Frame, TopBar } from '@shopify/polaris'
@@ -16,7 +16,7 @@ import {
 
 export default function App() {
   const pages = import.meta.globEager("./pages/**/!(*.test.[jt]sx)*.([jt]sx)");
-  const { isAuthenticated, user, logout } = useAuth0()
+  const { isAuthenticated, user, logout, getAccessTokenSilently } = useAuth0()
   const [userMenuActive, setUserMenuActive] = useState(false);
 
   const userMenuMarkup = (
@@ -29,7 +29,13 @@ export default function App() {
         },
         {
           items: [
-            { content: 'Logout', icon: ExitMajor, onAction: logout, accessibilityLabel: 'Logout', target:'/logout' },
+            {
+              content: 'Logout', icon: ExitMajor, onAction: () => {
+                localStorage.removeItem('token')
+                logout()
+
+              }, accessibilityLabel: 'Logout', target: '/logout'
+            },
           ],
         },
       ]
@@ -51,6 +57,15 @@ export default function App() {
     width: 25,
     topBarSource: Logo,
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      (async () => {
+        const accessToken = await getAccessTokenSilently()
+        localStorage.setItem('token', accessToken)
+      })()
+    }
+  }, [isAuthenticated])
 
   return (
     <PolarisProvider>

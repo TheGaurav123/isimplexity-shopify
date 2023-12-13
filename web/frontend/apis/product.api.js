@@ -4,7 +4,11 @@ import { AuthHeaderService } from '../services/auth-header.service'
 const getProducts = async (pageNo = 0, pageSize = 10) => {
     const transactionUrl = `https://api-stage.isimplexity.com/api/v2/plans?pageSize=${pageSize}&pageNo=${pageNo}`
     const response = await axios
-        .get(transactionUrl, { headers: AuthHeaderService })
+        .get(transactionUrl, {
+            headers: {
+                Authorization: await AuthHeaderService()
+            }
+        })
         .then(res => res.data)
         .catch(err => console.error('Error while getting products', err))
 
