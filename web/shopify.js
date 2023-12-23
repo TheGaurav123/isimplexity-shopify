@@ -17,7 +17,7 @@ const billingConfig = {
 const shopify = shopifyApp({
   api: {
     apiVersion: LATEST_API_VERSION,
-    scopes: ['write_products', 'read_products'],
+    scopes: ['write_products', 'read_products', 'read_orders'],
     restResources,
     billing: undefined,
     logger: true

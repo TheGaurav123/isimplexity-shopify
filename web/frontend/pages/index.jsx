@@ -4,6 +4,7 @@ import { Loading, Page, Pagination, Text, Button, Modal, Layout, VerticalStack }
 import { ArrowRightMinor } from '@shopify/polaris-icons'
 import { getProducts } from '../apis/product.api'
 import { useAuthenticatedFetch } from '../hooks'
+import { VENDOR_NAME } from '../../constants'
 
 const index = () => {
   const [loading, setLoading] = useState({
@@ -33,22 +34,26 @@ const index = () => {
   const handleFinalizeCheckout = async () => {
     setLoading({ ...loading, confirmBtn: true })
     const payload = cartProducts.map(val => {
-      const { _id, productName, price, productId } = val
+      const { productName, price } = val
       return {
         input: {
-          // id: _id,
           title: productName,
+          vendor: VENDOR_NAME,
+          productType: 'Network Software',
           variants: [
             {
-              price
-              // productId
+              price,
+              requiresShipping: false,
+              inventoryItem: {
+                tracked: false
+              }
             }
           ]
         }
       }
     })
 
-    const response = await fetch('/api/products/create', {
+    await fetch('/api/products/create', {
       method: 'POST',
       headers: {
         "Content-Type": "application/json",

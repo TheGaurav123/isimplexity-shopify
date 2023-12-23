@@ -78,18 +78,18 @@ export default function App() {
                   label: 'Products',
                   destination: "/",
                 },
-                {
-                  label: 'Notifications',
-                  destination: "/notifications",
-                },
-                {
-                  label: 'Orders',
-                  destination: "/orders",
-                },
-                {
-                  label: 'Account',
-                  destination: "/account",
-                }
+                // {
+                //   label: 'Notifications',
+                //   destination: "/notifications",
+                // },
+                // {
+                //   label: 'Orders',
+                //   destination: "/orders",
+                // },
+                // {
+                //   label: 'Account',
+                //   destination: "/account",
+                // }
               ]}
             />
             {
